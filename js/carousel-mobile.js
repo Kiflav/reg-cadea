@@ -1,16 +1,17 @@
-document.addEventListener('DOMContentLoaded', function() {
-    var carouselContent = document.querySelector('#hoe-werkt .carousel-content');
-    var cards = document.querySelectorAll('#hoe-werkt .card');
-    var prevBtn = document.querySelector('.carousel-btn.left');
-    var nextBtn = document.querySelector('.carousel-btn.right');
-    var currentIndex = 0;
-    var touchStartX = 0;
-    var touchEndX = 0;
+document.addEventListener("DOMContentLoaded", function () {
+    const carouselContent = document.querySelector('#hoe-werkt .carousel-content');
+    const cards = document.querySelectorAll('#hoe-werkt .card');
+    const prevBtn = document.querySelector('.carousel-btn.left');
+    const nextBtn = document.querySelector('.carousel-btn.right');
+    
+    let index = 0;
+    let touchStartX = 0;
+    let touchEndX = 0;
 
     function updateCarousel() {
         if (window.innerWidth <= 768) {
             var cardWidth = cards[0].offsetWidth + 40; // Breedte + gap
-            carouselContent.style.transform = 'translateX(-' + (currentIndex * cardWidth) + 'px)';
+            carouselContent.style.transform = 'translateX(-' + (index * cardWidth) + 'px)';
             carouselContent.offsetHeight; // Forceert reflow
         } else {
             carouselContent.style.transform = 'translateX(0)';
@@ -20,9 +21,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Knoppen
     nextBtn.addEventListener('click', function() {
         if (window.innerWidth <= 768) {
-            currentIndex++;
-            if (currentIndex >= cards.length) {
-                currentIndex = 0;
+            index++;
+            if (index >= cards.length) {
+                index = 0; // Loop naar begin
             }
             updateCarousel();
             removeSwipeListeners();
@@ -32,9 +33,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     prevBtn.addEventListener('click', function() {
         if (window.innerWidth <= 768) {
-            currentIndex--;
-            if (currentIndex < 0) {
-                currentIndex = cards.length - 1;
+            index--;
+            if (index < 0) {
+                index = cards.length - 1; // Loop naar einde
             }
             updateCarousel();
             removeSwipeListeners();
@@ -46,67 +47,68 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleTouchStart(event) {
         if (window.innerWidth <= 768) {
             touchStartX = event.touches[0].clientX;
-            console.log('Start: ' + touchStartX); // Debug
         }
     }
 
     function handleTouchMove(event) {
         if (window.innerWidth <= 768) {
-            touchEndX = event.touches[0].clientX;
-            console.log('Move: ' + touchEndX); // Debug
-            event.preventDefault(); // Voorkomt iOS-scrollen
+            event.preventDefault(); // Voorkomt scrollen op iOS
         }
     }
 
     function handleTouchEnd(event) {
         if (window.innerWidth <= 768) {
             touchEndX = event.changedTouches[0].clientX;
-            var swipeDistance = touchEndX - touchStartX;
-            console.log('End, distance: ' + swipeDistance); // Debug
+            const swipeDistance = touchEndX - touchStartX;
 
-            if (Math.abs(swipeDistance) > 50) {
+            if (Math.abs(swipeDistance) > 50) { // Drempel van 50px
                 if (swipeDistance < 0) { // Swipe naar links
-                    currentIndex++;
-                    if (currentIndex >= cards.length) {
-                        currentIndex = 0;
+                    index++;
+                    if (index >= cards.length) {
+                        index = 0;
                     }
                 } else { // Swipe naar rechts
-                    currentIndex--;
-                    if (currentIndex < 0) {
-                        currentIndex = cards.length - 1;
+                    index--;
+                    if (index < 0) {
+                        index = cards.length - 1;
                     }
                 }
                 updateCarousel();
             }
             removeSwipeListeners();
-            initSwipe(); // Reset na elke swipe
+            initSwipe();
             touchStartX = 0;
             touchEndX = 0;
         }
     }
 
     function removeSwipeListeners() {
-        carouselContent.removeEventListener('touchstart', handleTouchStart);
-        carouselContent.removeEventListener('touchmove', handleTouchMove);
-        carouselContent.removeEventListener('touchend', handleTouchEnd);
+        carouselContent.removeEventListener("touchstart", handleTouchStart);
+        carouselContent.removeEventListener("touchmove", handleTouchMove);
+        carouselContent.removeEventListener("touchend", handleTouchEnd);
     }
 
     function initSwipe() {
-        carouselContent.addEventListener('touchstart', handleTouchStart, { passive: false });
-        carouselContent.addEventListener('touchmove', handleTouchMove, { passive: false });
-        carouselContent.addEventListener('touchend', handleTouchEnd, { passive: false });
+        carouselContent.addEventListener("touchstart", handleTouchStart, { passive: false });
+        carouselContent.addEventListener("touchmove", handleTouchMove, { passive: false });
+        carouselContent.addEventListener("touchend", handleTouchEnd, { passive: false });
     }
 
-    // Resize handler
-    window.addEventListener('resize', function() {
-        if (window.innerWidth > 768) {
-            carouselContent.style.transform = 'translateX(0)';
-        } else {
-            updateCarousel();
-        }
-    });
+    function initResize() {
+        window.addEventListener("resize", function () {
+            if (window.innerWidth > 768) {
+                carouselContent.style.transform = "translateX(0)";
+            } else {
+                updateCarousel();
+            }
+        });
+    }
 
-    // Initialisatie
-    updateCarousel();
-    initSwipe();
+    function initCarousel() {
+        updateCarousel();
+        initSwipe();
+        initResize();
+    }
+
+    initCarousel();
 });
