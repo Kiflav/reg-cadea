@@ -3,106 +3,59 @@ document.addEventListener("DOMContentLoaded", function () {
     const cards = document.querySelectorAll('#hoe-werkt .card');
     const prevBtn = document.querySelector('.carousel-btn.left');
     const nextBtn = document.querySelector('.carousel-btn.right');
-    
+
     let index = 0;
     let touchStartX = 0;
     let touchEndX = 0;
 
     function updateCarousel() {
         if (window.innerWidth <= 768) {
-            var cardWidth = cards[0].offsetWidth + 40; // Breedte + gap
-            carouselContent.style.transform = 'translateX(-' + (index * cardWidth) + 'px)';
-            carouselContent.offsetHeight; // Forceert reflow
+            const cardWidth = cards[0].offsetWidth + 40; // card + gap
+            carouselContent.style.transform = `translateX(-${index * cardWidth}px)`;
         } else {
             carouselContent.style.transform = 'translateX(0)';
         }
     }
 
-    // Knoppen
-    nextBtn.addEventListener('click', function() {
-        if (window.innerWidth <= 768) {
-            index++;
-            if (index >= cards.length) {
-                index = 0; // Loop naar begin
-            }
-            updateCarousel();
-        }
-    });
-
-    prevBtn.addEventListener('click', function() {
-        if (window.innerWidth <= 768) {
-            index--;
-            if (index < 0) {
-                index = cards.length - 1; // Loop naar einde
-            }
-            updateCarousel();
-        }
-    });
-
-    // Swipe-functies
-    function handleTouchStart(event) {
-        if (window.innerWidth <= 768) {
-            touchStartX = event.touches[0].clientX;
-        }
-    }
-
-    function handleTouchMove(event) {
-        if (window.innerWidth <= 768) {
-            event.preventDefault(); // Voorkomt scrollen op iOS
-        }
-    }
-
-    function handleTouchEnd(event) {
-        if (window.innerWidth <= 768) {
-            touchEndX = event.changedTouches[0].clientX;
-            const swipeDistance = touchEndX - touchStartX;
-
-            if (Math.abs(swipeDistance) > 50) { // Drempel van 50px
-                if (swipeDistance < 0) { // Swipe naar links
-                    index++;
-                    if (index >= cards.length) {
-                        index = 0;
-                    }
-                } else { // Swipe naar rechts
-                    index--;
-                    if (index < 0) {
-                        index = cards.length - 1;
-                    }
-                }
-                updateCarousel();
-            }
-            touchStartX = 0;
-            touchEndX = 0;
-        }
-    }
-
-let swipeInitialized = false;
-
-function initSwipe() {
-    if (swipeInitialized) return;
-    swipeInitialized = true;
-
-    carouselContent.addEventListener("touchstart", handleTouchStart, false);
-    carouselContent.addEventListener("touchmove", handleTouchMove, false);
-    carouselContent.addEventListener("touchend", handleTouchEnd, false);
-}
-
-
-    function initResize() {
-        window.addEventListener("resize", function () {
-            if (window.innerWidth > 768) {
-                carouselContent.style.transform = "translateX(0)";
-            } else {
-                updateCarousel();
-            }
-        });
-    }
-
-    function initCarousel() {
+    function nextCard() {
+        index = (index + 1) % cards.length;
         updateCarousel();
-        initSwipe();
-        initResize();
     }
 
-    initCarousel();
+    function prevCard() {
+        index = (index - 1 + cards.length) % cards.length;
+        updateCarousel();
+    }
+
+    // Buttons
+    nextBtn.addEventListener('click', nextCard);
+    prevBtn.addEventListener('click', prevCard);
+
+    // Swipe
+    function handleTouchStart(e) {
+        if (window.innerWidth > 768) return;
+        touchStartX = e.touches[0].clientX;
+    }
+
+    function handleTouchEnd(e) {
+        if (window.innerWidth > 768) return;
+        touchEndX = e.changedTouches[0].clientX;
+        const distance = touchEndX - touchStartX;
+
+        if (Math.abs(distance) > 40) { // 40px swipe drempel
+            if (distance < 0) {
+                nextCard();
+            } else {
+                prevCard();
+            }
+        }
+    }
+
+    carouselContent.addEventListener("touchstart", handleTouchStart, { passive: true });
+    carouselContent.addEventListener("touchend", handleTouchEnd, { passive: true });
+
+    // Resize support
+    window.addEventListener("resize", updateCarousel);
+
+    updateCarousel(); // Init
 });
