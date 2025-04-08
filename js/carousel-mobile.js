@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const wrapper = document.querySelector('#hoe-werkt .carousel-wrapper'); // 👈 swipe hierop!
+    const wrapper = document.querySelector('#hoe-werkt .carousel-wrapper'); 
     const carouselContent = document.querySelector('#hoe-werkt .carousel-content');
     const cards = document.querySelectorAll('#hoe-werkt .card');
     const prevBtn = document.querySelector('.carousel-btn.left');
@@ -36,6 +36,10 @@ document.addEventListener("DOMContentLoaded", function () {
         if (window.innerWidth > 768) return;
         touchStartX = e.touches[0].clientX;
     }
+function handleTouchMove(e) {
+    if (window.innerWidth > 768) return;
+    e.preventDefault(); 
+
 
     function handleTouchEnd(e) {
         if (window.innerWidth > 768) return;
@@ -52,8 +56,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // ✅ Swipe op de wrapper (die zichtbaar is)
-    wrapper.addEventListener("touchstart", handleTouchStart, { passive: true });
-    wrapper.addEventListener("touchend", handleTouchEnd, { passive: true });
+wrapper.addEventListener("touchstart", handleTouchStart, { passive: false });
+wrapper.addEventListener("touchmove", handleTouchMove, { passive: false });
+wrapper.addEventListener("touchend", handleTouchEnd, { passive: false });
 
     window.addEventListener("resize", updateCarousel);
     updateCarousel();
