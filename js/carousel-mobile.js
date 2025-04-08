@@ -76,12 +76,17 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+let swipeInitialized = false;
 
 function initSwipe() {
+    if (swipeInitialized) return;
+    swipeInitialized = true;
+
     carouselContent.addEventListener("touchstart", handleTouchStart, false);
     carouselContent.addEventListener("touchmove", handleTouchMove, false);
     carouselContent.addEventListener("touchend", handleTouchEnd, false);
 }
+
 
     function initResize() {
         window.addEventListener("resize", function () {
