@@ -39,6 +39,7 @@ h1 {
     font-size: 35px !important;
     font-weight: bold;
     margin-bottom: 20px;
+	width:102%;
 }
 h1 span {
 	color:  var(--white);
@@ -1623,6 +1624,7 @@ margin: 0 auto;
     touch-action: pan-y; 
     -webkit-user-select: none; 
     user-select: none;
+	gap:15px;
 }
 .carousel-btn {
     display: none; 
