@@ -1617,6 +1617,7 @@ margin: 0 auto;
 .carousel-wrapper {
     width: 100%;
     overflow: hidden;
+	touch-action: pan-y pinch-zoom; 
 }
 .carousel-content {
     display: flex;
