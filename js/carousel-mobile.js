@@ -4,8 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var prevBtn = document.querySelector('.carousel-btn.left');
     var nextBtn = document.querySelector('.carousel-btn.right');
     var currentIndex = 0;
-    var startX = 0;
-    var isSwiping = false;
+    var touchStartX = 0;
+    var touchEndX = 0;
 
     function updateCarousel() {
         if (window.innerWidth <= 768) {
@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             carouselContent.style.transform = 'translateX(0)';
         }
+        carouselContent.offsetHeight; // Forceert reflow (zoals in de werkende versie)
     }
 
     // Knoppen
@@ -24,6 +25,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 currentIndex = 0; // Loop naar begin
             }
             updateCarousel();
+            removeSwipeListeners();
+            initSwipe(); // Reset swipe na knopgebruik
         }
     });
 
@@ -34,45 +37,79 @@ document.addEventListener('DOMContentLoaded', function() {
                 currentIndex = cards.length - 1; // Loop naar einde
             }
             updateCarousel();
+            removeSwipeListeners();
+            initSwipe(); // Reset swipe na knopgebruik
         }
     });
 
-    // Swipe
-    carouselContent.addEventListener('touchstart', function(e) {
+    // Swipe-functies
+    function handleTouchStart(event) {
         if (window.innerWidth <= 768) {
-            startX = e.touches[0].clientX;
-            isSwiping = true;
+            touchStartX = event.touches[0].clientX;
         }
-    });
+    }
 
-    carouselContent.addEventListener('touchmove', function(e) {
-        if (isSwiping && window.innerWidth <= 768) {
-            e.preventDefault(); // Voorkomt scrollen op iOS
+    function handleTouchMove(event) {
+        if (window.innerWidth <= 768) {
+            touchEndX = event.touches[0].clientX;
         }
-    });
+    }
 
-    carouselContent.addEventListener('touchend', function(e) {
-        if (isSwiping && window.innerWidth <= 768) {
-            var endX = e.changedTouches[0].clientX;
-            var diffX = startX - endX;
+    function handleTouchEnd(event) {
+        if (window.innerWidth <= 768) {
+            touchEndX = event.changedTouches[0].clientX;
+            var swipeDistance = touchEndX - touchStartX;
 
-            if (diffX > 50) { // Swipe naar links
-                currentIndex++;
-                if (currentIndex >= cards.length) {
-                    currentIndex = 0;
+            if (Math.abs(swipeDistance) > 50) { // Drempel van 50px (iets lager dan 60)
+                if (swipeDistance < 0) { // Swipe naar links
+                    currentIndex++;
+                    if (currentIndex >= cards.length) {
+                        currentIndex = 0;
+                    }
+                } else { // Swipe naar rechts
+                    currentIndex--;
+                    if (currentIndex < 0) {
+                        currentIndex = cards.length - 1;
+                    }
                 }
                 updateCarousel();
-            } else if (diffX < -50) { // Swipe naar rechts
-                currentIndex--;
-                if (currentIndex < 0) {
-                    currentIndex = cards.length - 1;
-                }
+                removeSwipeListeners();
+                initSwipe(); // Reset listeners na swipe
+            }
+            touchStartX = 0;
+            touchEndX = 0; // Reset posities
+        }
+    }
+
+    function removeSwipeListeners() {
+        carouselContent.removeEventListener('touchstart', handleTouchStart);
+        carouselContent.removeEventListener('touchmove', handleTouchMove);
+        carouselContent.removeEventListener('touchend', handleTouchEnd);
+    }
+
+    function initSwipe() {
+        carouselContent.addEventListener('touchstart', handleTouchStart);
+        carouselContent.addEventListener('touchmove', handleTouchMove);
+        carouselContent.addEventListener('touchend', handleTouchEnd);
+    }
+
+    // Resize handler
+    function initResize() {
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                carouselContent.style.transform = 'translateX(0)';
+            } else {
                 updateCarousel();
             }
-            isSwiping = false; // Reset swipe-status
-        }
-    });
+        });
+    }
 
-    window.addEventListener('resize', updateCarousel);
-    updateCarousel(); // Startpositie
+    // Initialisatie
+    function initCarousel() {
+        updateCarousel();
+        initSwipe();
+        initResize();
+    }
+
+    initCarousel();
 });
