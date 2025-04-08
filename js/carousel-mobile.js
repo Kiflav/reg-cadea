@@ -88,11 +88,11 @@ document.addEventListener("DOMContentLoaded", function () {
         carouselContent.removeEventListener("touchend", handleTouchEnd);
     }
 
-    function initSwipe() {
-        carouselContent.addEventListener("touchstart", handleTouchStart, { passive: false });
-        carouselContent.addEventListener("touchmove", handleTouchMove, { passive: false });
-        carouselContent.addEventListener("touchend", handleTouchEnd, { passive: false });
-    }
+function initSwipe() {
+    carouselContent.addEventListener("touchstart", handleTouchStart, false);
+    carouselContent.addEventListener("touchmove", handleTouchMove, false);
+    carouselContent.addEventListener("touchend", handleTouchEnd, false);
+}
 
     function initResize() {
         window.addEventListener("resize", function () {
