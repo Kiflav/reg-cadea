@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
+    const wrapper = document.querySelector('#hoe-werkt .carousel-wrapper'); // 👈 swipe hierop!
     const carouselContent = document.querySelector('#hoe-werkt .carousel-content');
     const cards = document.querySelectorAll('#hoe-werkt .card');
     const prevBtn = document.querySelector('.carousel-btn.left');
@@ -27,11 +28,10 @@ document.addEventListener("DOMContentLoaded", function () {
         updateCarousel();
     }
 
-    // Buttons
     nextBtn.addEventListener('click', nextCard);
     prevBtn.addEventListener('click', prevCard);
 
-    // Swipe
+    // ✅ Swipe handlers
     function handleTouchStart(e) {
         if (window.innerWidth > 768) return;
         touchStartX = e.touches[0].clientX;
@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
         touchEndX = e.changedTouches[0].clientX;
         const distance = touchEndX - touchStartX;
 
-        if (Math.abs(distance) > 40) { // 40px swipe drempel
+        if (Math.abs(distance) > 40) {
             if (distance < 0) {
                 nextCard();
             } else {
@@ -51,11 +51,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    carouselContent.addEventListener("touchstart", handleTouchStart, { passive: true });
-    carouselContent.addEventListener("touchend", handleTouchEnd, { passive: true });
+    // ✅ Swipe op de wrapper (die zichtbaar is)
+    wrapper.addEventListener("touchstart", handleTouchStart, { passive: true });
+    wrapper.addEventListener("touchend", handleTouchEnd, { passive: true });
 
-    // Resize support
     window.addEventListener("resize", updateCarousel);
-
-    updateCarousel(); // Init
+    updateCarousel();
 });
