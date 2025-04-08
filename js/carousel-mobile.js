@@ -36,10 +36,11 @@ document.addEventListener("DOMContentLoaded", function () {
         if (window.innerWidth > 768) return;
         touchStartX = e.touches[0].clientX;
     }
-function handleTouchMove(e) {
-    if (window.innerWidth > 768) return;
-    e.preventDefault(); 
 
+    function handleTouchMove(e) {
+        if (window.innerWidth > 768) return;
+        e.preventDefault(); // voorkomt scrollen op iOS
+    }
 
     function handleTouchEnd(e) {
         if (window.innerWidth > 768) return;
@@ -56,9 +57,9 @@ function handleTouchMove(e) {
     }
 
     // ✅ Swipe op de wrapper (die zichtbaar is)
-wrapper.addEventListener("touchstart", handleTouchStart, { passive: false });
-wrapper.addEventListener("touchmove", handleTouchMove, { passive: false });
-wrapper.addEventListener("touchend", handleTouchEnd, { passive: false });
+    wrapper.addEventListener("touchstart", handleTouchStart, { passive: false });
+    wrapper.addEventListener("touchmove", handleTouchMove, { passive: false });
+    wrapper.addEventListener("touchend", handleTouchEnd, { passive: false });
 
     window.addEventListener("resize", updateCarousel);
     updateCarousel();
