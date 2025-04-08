@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var touchEndX = 0;
 
     function updateCarousel() {
-        ifLike(window.innerWidth <= 768) {
+        if (window.innerWidth <= 768) {
             var cardWidth = cards[0].offsetWidth + 40; // Breedte + gap
             carouselContent.style.transform = 'translateX(-' + (currentIndex * cardWidth) + 'px)';
             carouselContent.offsetHeight; // Forceert reflow
@@ -46,15 +46,15 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleTouchStart(event) {
         if (window.innerWidth <= 768) {
             touchStartX = event.touches[0].clientX;
-            console.log('Touch start: ' + touchStartX); // Debug
+            console.log('Start: ' + touchStartX); // Debug
         }
     }
 
     function handleTouchMove(event) {
         if (window.innerWidth <= 768) {
             touchEndX = event.touches[0].clientX;
-            console.log('Touch move: ' + touchEndX); // Debug
-            event.preventDefault(); // Voorkomt scrollen
+            console.log('Move: ' + touchEndX); // Debug
+            event.preventDefault(); // Voorkomt iOS-scrollen
         }
     }
 
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (window.innerWidth <= 768) {
             touchEndX = event.changedTouches[0].clientX;
             var swipeDistance = touchEndX - touchStartX;
-            console.log('Touch end, distance: ' + swipeDistance); // Debug
+            console.log('End, distance: ' + swipeDistance); // Debug
 
             if (Math.abs(swipeDistance) > 50) {
                 if (swipeDistance < 0) { // Swipe naar links
@@ -79,9 +79,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateCarousel();
             }
             removeSwipeListeners();
-            initSwipe(); // Reset listeners na elke swipe
+            initSwipe(); // Reset na elke swipe
             touchStartX = 0;
-            touchEndX = 0; // Reset posities
+            touchEndX = 0;
         }
     }
 
@@ -92,9 +92,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function initSwipe() {
-        carouselContent.addEventListener('touchstart', handleTouchStart);
-        carouselContent.addEventListener('touchmove', handleTouchMove);
-        carouselContent.addEventListener('touchend', handleTouchEnd);
+        carouselContent.addEventListener('touchstart', handleTouchStart, { passive: false });
+        carouselContent.addEventListener('touchmove', handleTouchMove, { passive: false });
+        carouselContent.addEventListener('touchend', handleTouchEnd, { passive: false });
     }
 
     // Resize handler
