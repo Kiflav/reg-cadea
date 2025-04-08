@@ -75,8 +75,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
                 updateCarousel();
             }
-            removeSwipeListeners();
-            initSwipe();
             touchStartX = 0;
             touchEndX = 0;
         }
