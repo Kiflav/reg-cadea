@@ -38,8 +38,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 index = cards.length - 1; // Loop naar einde
             }
             updateCarousel();
-            removeSwipeListeners();
-            initSwipe();
         }
     });
 
