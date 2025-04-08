@@ -1617,14 +1617,13 @@ margin: 0 auto;
 .carousel-wrapper {
     width: 100%;
     overflow: hidden;
-	touch-action: pan-y pinch-zoom; 
 }
 .carousel-content {
     display: flex;
     flex-direction: row;
 	transition: transform 0.3s ease-in-out;
-    touch-action: pan-y pinch-zoom; /* Laat verticale scroll toe, maar verbeter horizontaal swipen */
-    -webkit-user-select: none; /* Voorkomt selecteren op iOS */
+    touch-action: pan-y; 
+    -webkit-user-select: none; 
     user-select: none;
 }
 .carousel-btn {
