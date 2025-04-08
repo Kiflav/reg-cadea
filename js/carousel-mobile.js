@@ -76,11 +76,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function removeSwipeListeners() {
-        carouselContent.removeEventListener("touchstart", handleTouchStart);
-        carouselContent.removeEventListener("touchmove", handleTouchMove);
-        carouselContent.removeEventListener("touchend", handleTouchEnd);
-    }
 
 function initSwipe() {
     carouselContent.addEventListener("touchstart", handleTouchStart, false);
