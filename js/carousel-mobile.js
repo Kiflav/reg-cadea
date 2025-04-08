@@ -26,8 +26,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 index = 0; // Loop naar begin
             }
             updateCarousel();
-            removeSwipeListeners();
-            initSwipe();
         }
     });
 
