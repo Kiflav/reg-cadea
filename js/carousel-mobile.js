@@ -8,13 +8,13 @@ document.addEventListener('DOMContentLoaded', function() {
     var touchEndX = 0;
 
     function updateCarousel() {
-        if (window.innerWidth <= 768) {
+        ifLike(window.innerWidth <= 768) {
             var cardWidth = cards[0].offsetWidth + 40; // Breedte + gap
             carouselContent.style.transform = 'translateX(-' + (currentIndex * cardWidth) + 'px)';
+            carouselContent.offsetHeight; // Forceert reflow
         } else {
             carouselContent.style.transform = 'translateX(0)';
         }
-        carouselContent.offsetHeight; // Forceert reflow (zoals in de werkende versie)
     }
 
     // Knoppen
@@ -22,11 +22,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (window.innerWidth <= 768) {
             currentIndex++;
             if (currentIndex >= cards.length) {
-                currentIndex = 0; // Loop naar begin
+                currentIndex = 0;
             }
             updateCarousel();
             removeSwipeListeners();
-            initSwipe(); // Reset swipe na knopgebruik
+            initSwipe();
         }
     });
 
@@ -34,11 +34,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (window.innerWidth <= 768) {
             currentIndex--;
             if (currentIndex < 0) {
-                currentIndex = cards.length - 1; // Loop naar einde
+                currentIndex = cards.length - 1;
             }
             updateCarousel();
             removeSwipeListeners();
-            initSwipe(); // Reset swipe na knopgebruik
+            initSwipe();
         }
     });
 
@@ -46,12 +46,15 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleTouchStart(event) {
         if (window.innerWidth <= 768) {
             touchStartX = event.touches[0].clientX;
+            console.log('Touch start: ' + touchStartX); // Debug
         }
     }
 
     function handleTouchMove(event) {
         if (window.innerWidth <= 768) {
             touchEndX = event.touches[0].clientX;
+            console.log('Touch move: ' + touchEndX); // Debug
+            event.preventDefault(); // Voorkomt scrollen
         }
     }
 
@@ -59,8 +62,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (window.innerWidth <= 768) {
             touchEndX = event.changedTouches[0].clientX;
             var swipeDistance = touchEndX - touchStartX;
+            console.log('Touch end, distance: ' + swipeDistance); // Debug
 
-            if (Math.abs(swipeDistance) > 50) { // Drempel van 50px (iets lager dan 60)
+            if (Math.abs(swipeDistance) > 50) {
                 if (swipeDistance < 0) { // Swipe naar links
                     currentIndex++;
                     if (currentIndex >= cards.length) {
@@ -73,9 +77,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
                 updateCarousel();
-                removeSwipeListeners();
-                initSwipe(); // Reset listeners na swipe
             }
+            removeSwipeListeners();
+            initSwipe(); // Reset listeners na elke swipe
             touchStartX = 0;
             touchEndX = 0; // Reset posities
         }
@@ -94,22 +98,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Resize handler
-    function initResize() {
-        window.addEventListener('resize', function() {
-            if (window.innerWidth > 768) {
-                carouselContent.style.transform = 'translateX(0)';
-            } else {
-                updateCarousel();
-            }
-        });
-    }
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+            carouselContent.style.transform = 'translateX(0)';
+        } else {
+            updateCarousel();
+        }
+    });
 
     // Initialisatie
-    function initCarousel() {
-        updateCarousel();
-        initSwipe();
-        initResize();
-    }
-
-    initCarousel();
+    updateCarousel();
+    initSwipe();
 });
